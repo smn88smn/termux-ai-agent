@@ -2,7 +2,7 @@ import os
 import subprocess
 import sys
 
-print("🤖 سیستم چند ایجنتی (Multi-Agent) ترموکس با قابلیت گیت فعال شد...")
+print("🤖 سیستم چند ایجنتی (Multi-Agent) ترموکس با قابلیت گیت‌هاب فعال شد...")
 print("--------------------------------------------------")
 
 def run_command(command):
@@ -24,46 +24,42 @@ def coder_agent(task_description):
     
     lower_task = task_description.lower()
     if "بازی" in lower_task or "game" in lower_task:
-        code_content = """# بازی نمونه پایتونی
+        code_content = """# بازی نمونه پایتونی ساخته شده توسط ایجنت
 import random
 def play():
-    print("🎮 بازی ایجنت اجرا شد و آماده نبرد است!")
+    print("🎮 بازی هوشمند ایجنت با موفقیت اجرا شد!")
 if __name__ == "__main__":
     play()
 """
     else:
         code_content = f'''# اسکریپت پروژه برای: {task_description}
 def main():
-    print("🚀 پروژه با موفقیت توسط ایجنت آپدیت شد.")
-    print("هدف: {task_description}")
+    print("🚀 پروژه با موفقیت توسط ایجنت آپدیت و توسعه یافت.")
+    print("🎯 هدف: {task_description}")
 if __name__ == "__main__":
     main()
 '''
     with open(file_name, "w", encoding="utf-8") as f:
         f.write(code_content)
-    print(f"📁 فایل {file_name} ذخیره شد.")
+    print(f"📁 فایل {file_name} با موفقیت ایجاد و ذخیره شد.")
     return file_name
 
 def git_agent(commit_message):
-    """ایجنت گیت و گیت‌هاب: فایل‌ها را کامیت و به گیت‌هاب ارسال می‌کند"""
-    print("\n📦 [ایجنت گیت]: در حال بررسی وضعیت مخزن و ثبت تغییرات...")
+    """ایجنت گیت: تغییرات را ثبت و به گیت‌هاب ارسال می‌کند"""
+    print("\n📦 [ایجنت گیت]: در حال ارسال تغییرات به گیت‌هاب...")
     
-    # بررسی اینکه آیا گیت مقداردهی شده یا نه
-    if not os.path.exists(".git"):
-        run_command("git init")
-    
-    # افزودن فایل‌ها، کامیت و پوش کردن
     run_command("git add .")
-    
-    # کامیت کردن تغییرات
-    commit_cmd = f'git commit -m "Auto-Agent update: {commit_message}"'
-    success, _ = run_command(commit_cmd)
+    success, _ = run_command(f'git commit -m "Auto-Agent update: {commit_message}"')
     
     if success:
-        print("🎉 تغییرات با موفقیت در گیت ثبت (Commit) شدند!")
-        print("💡 نکته: اگر ریپوی ریموت متصل باشد، می‌توانی با دستور git push اون رو بفرستی روی گیت‌هاب.")
+        # ارسال خودکار به گیت‌هاب
+        push_success, _ = run_command("git push origin main")
+        if push_success:
+            print("🚀 کدها با موفقیت روی گیت‌هاب آپلود شدند!")
+        else:
+            print("⚠️ در ارسال به گیت‌هاب خطایی رخ داد.")
     else:
-        print("ℹ️ تغییر جدیدی برای کامیت وجود نداشت یا مخزن نیاز به تنظیم دارد.")
+        print("ℹ️ تغییر جدیدی برای کامیت وجود نداشت.")
 
 def main():
     while True:
@@ -80,15 +76,15 @@ def main():
         created_file = coder_agent(user_input)
         
         # ۲. تست و عیب‌یاب کد رو اجرا می‌کنه
-        print("\n🧪 [ایجنت تست و عیب‌یاب]: در حال اجرای کد...")
+        print("\n🧪 [ایجنت تست و عیب‌یاب]: در حال اجرای تست کد...")
         success, _ = run_command(f"python {created_file}")
         
         if success:
             print("🎉 تست با موفقیت پاس شد!")
-            # ۳. ایجنت گیت وارد عمل میشه
+            # ۳. ایجنت گیت وارد عمل میشه و خودکار می‌فرسته رو گیت‌هاب
             git_agent(user_input)
         else:
-            print("⚠️ مشکلی در اجرا بود.")
+            print("⚠️ مشکلی در اجرای کد بود.")
 
 if __name__ == "__main__":
     main()
