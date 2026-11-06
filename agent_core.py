@@ -2,11 +2,10 @@ import os
 import subprocess
 import sys
 
-print("🤖 سیستم چند ایجنتی (Multi-Agent) ترموکس با اصلاح نسخه GitHub Actions فعال شد...")
+print("🤖 سیستم چند ایجنتی (Multi-Agent) ترموکس با ساختار پاکسازی‌شده فعال شد...")
 print("--------------------------------------------------")
 
 def run_command(command):
-    """تابع اجرایی برای دستورات گیت و سیستمی"""
     print(f"⚙️ در حال اجرای دستور: {command}")
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     stdout, stderr = process.communicate()
@@ -18,44 +17,42 @@ def run_command(command):
         return True, stdout
 
 def coder_agent(task_description):
-    """ایجنت برنامه‌نویس: فایل‌های کامل پروژه، بیلدوزر و گیت‌هاب اکشنز آپدیت‌شده را می‌سازد"""
-    print(f"\n👨‍💻 [ایجنت برنامه‌نویس]: در حال ساخت ساختار کامل پروژه برای: '{task_description}'")
+    print(f"\n👨‍💻 [ایجنت برنامه‌نویس]: در حال ساخت ساختار پروژه برای: '{task_description}'")
     
     os.makedirs("app_source", exist_ok=True)
     file_name = os.path.join("app_source", "main.py")
     
     lower_task = task_description.lower()
     if "ماشین حساب" in lower_task or "calculator" in lower_task:
-        code_content = '''# ماشین حساب پیشرفته پایتونی برای اندروید
+        code_content = '''# ماشین حساب پایتونی برای اندروید
 def main():
     print("🧮 ماشین حساب موبایلی فعال شد!")
-    num1 = 10
-    num2 = 5
-    print(f"جمع: {num1 + num2}")
-    print(f"تفریق: {num1 - num2}")
-    print(f"ضرب: {num1 * num2}")
-    print(f"تقسیم: {num1 / num2}")
+    a = 20
+    b = 10
+    print(f"جمع: {a + b}")
+    print(f"تفریق: {a - b}")
+    print(f"ضرب: {a * b}")
+    print(f"تقسیم: {a / b}")
 
 if __name__ == "__main__":
     main()
 '''
     elif "بازی" in lower_task or "game" in lower_task:
-        code_content = """# کدهای بازی پایتونی برای اندروید
+        code_content = """# بازی ساده پایتونی
 import random
 
 def main():
     print("🎮 بازی موبایلی ایجنت اجرا شد!")
-    number = random.randint(1, 10)
-    print(f"عدد شانس اندروید: {number}")
+    print(f"عدد شانس: {random.randint(1, 100)}")
 
 if __name__ == "__main__":
     main()
 """
     else:
-        code_content = f'''# فایل اصلی پروژه برای: {task_description}
+        code_content = f'''# فایل اصلی پروژه
 def main():
-    print("🚀 اپلیکیشن اندروید شما با موفقیت اجرا شد.")
-    print("هدف پروژه: {task_description}")
+    print("🚀 اپلیکیشن شما اجرا شد.")
+    print("هدف: {task_description}")
 
 if __name__ == "__main__":
     main()
@@ -68,10 +65,10 @@ if __name__ == "__main__":
     if not os.path.exists(build_spec):
         with open(build_spec, "w", encoding="utf-8") as f:
             f.write("""[app]
-title = AgentApp
-package.name = agentapp
-package.domain = org.agent
-source.include_exts = py,png,jpg,kv,atlas
+title = MyAgentApp
+package.name = myagentapp
+package.domain = org.test
+source.include_exts = py
 version = 0.1
 requirements = python3,kivy
 orientation = portrait
@@ -79,7 +76,7 @@ fullscreen = 0
 android.permissions = INTERNET
 """)
 
-    # ساخت فایل گیت‌هاب اکشنز با نسخه آپدیت‌شده v4 (برای رفع ارور آپلود آرتفکت)
+    # تنظیمات کاملاً استاندارد گیت‌هاب اکشنز برای بیلد
     workflow_dir = os.path.join(".github", "workflows")
     os.makedirs(workflow_dir, exist_ok=True)
     workflow_file = os.path.join(workflow_dir, "build_apk.yml")
@@ -92,7 +89,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       
@@ -103,7 +100,6 @@ jobs:
 
       - name: Build with Buildozer
         uses: ArtemSBulgakov/buildozer-action@v1
-        id: buildozer
         with:
           workdir: app_source
           command: buildozer android debug
@@ -111,33 +107,30 @@ jobs:
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: package
+          name: app-release-debug
           path: app_source/bin/*.apk
 """
     with open(workflow_file, "w", encoding="utf-8") as f:
         f.write(workflow_content)
 
-    print(f"📁 فایل‌های پروژه با موفقیت آپدیت شدند.")
+    print(f"📁 ساختار پروژه در پوشه app_source آماده شد.")
     return "app_source"
 
 def git_agent(commit_message):
-    """ایجنت گیت: کامیت و ارسال خودکار فایل‌ها به گیت‌هاب"""
-    print("\n📦 [ایجنت گیت]: در حال ارسال ساختار اصلاح‌شده به گیت‌هاب...")
+    print("\n📦 [ایجنت گیت]: در حال ارسال به گیت‌هاب...")
     
     run_command("git add .")
-    success, _ = run_command(f'git commit -m "Fix workflow v4 for: {commit_message}"')
+    success, _ = run_command(f'git commit -m "Update build for: {commit_message}"')
     
     if success:
-        print("🔄 دریافت آخرین تغییرات از گیت‌هاب (Pull)...")
         run_command("git pull origin main --rebase")
-        
         push_success, _ = run_command("git push origin main")
         if push_success:
-            print("🚀 کدهای اصلاح‌شده روی گیت‌هاب نشست! این بار اکشنز بدون ارور کارش رو شروع می‌کنه.")
+            print("🚀 کدها با موفقیت پوش شدند!")
         else:
-            print("⚠️ خطا در ارسال به گیت‌هاب.")
+            print("⚠️ خطا در پوش کردن.")
     else:
-        print("ℹ️ تغییر جدیدی برای ثبت وجود نداشت.")
+        print("ℹ️ تغییر جدیدی نبود.")
 
 def main():
     while True:
@@ -149,17 +142,16 @@ def main():
             continue
             
         print(f"\n🧠 [مدیر پروژه]: دستور دریافت شد -> '{user_input}'")
-        
         target_dir = coder_agent(user_input)
         
-        print("\n🧪 [ایجنت تست و عیب‌یاب]: در حال بررسی صحت کدهای پایتون...")
+        print("\n🧪 [ایجنت تست و عیب‌یاب]: بررسی سینتکس...")
         success, _ = run_command(f"python -m py_compile {target_dir}/main.py")
         
         if success:
-            print("🎉 تست سینتکس پاس شد!")
+            print("🎉 تست سینتکس موفق بود!")
             git_agent(user_input)
         else:
-            print("⚠️ خطا در کدهای تولید شده.")
+            print("⚠️ خطا در کد.")
 
 if __name__ == "__main__":
     main()

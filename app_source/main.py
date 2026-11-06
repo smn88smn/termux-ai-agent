@@ -1,12 +1,12 @@
-# ماشین حساب پیشرفته پایتونی برای اندروید
+# ماشین حساب پایتونی برای اندروید
 def main():
     print("🧮 ماشین حساب موبایلی فعال شد!")
-    num1 = 10
-    num2 = 5
-    print(f"جمع: {num1 + num2}")
-    print(f"تفریق: {num1 - num2}")
-    print(f"ضرب: {num1 * num2}")
-    print(f"تقسیم: {num1 / num2}")
+    a = 20
+    b = 10
+    print(f"جمع: {a + b}")
+    print(f"تفریق: {a - b}")
+    print(f"ضرب: {a * b}")
+    print(f"تقسیم: {a / b}")
 
 if __name__ == "__main__":
     main()
