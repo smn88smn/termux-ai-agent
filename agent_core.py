@@ -2,7 +2,7 @@ import os
 import subprocess
 import sys
 
-print("🤖 سیستم چند ایجنتی (Multi-Agent) ترموکس با قابلیت ساخت APK در گیت‌هاب فعال شد...")
+print("🤖 سیستم چند ایجنتی (Multi-Agent) ترموکس با اصلاح نسخه GitHub Actions فعال شد...")
 print("--------------------------------------------------")
 
 def run_command(command):
@@ -18,10 +18,9 @@ def run_command(command):
         return True, stdout
 
 def coder_agent(task_description):
-    """ایجنت برنامه‌نویس: فایل‌های کامل پروژه، بیلدوزر و گیت‌هاب اکشنز را می‌سازد"""
+    """ایجنت برنامه‌نویس: فایل‌های کامل پروژه، بیلدوزر و گیت‌هاب اکشنز آپدیت‌شده را می‌سازد"""
     print(f"\n👨‍💻 [ایجنت برنامه‌نویس]: در حال ساخت ساختار کامل پروژه برای: '{task_description}'")
     
-    # ۱. ساخت پوشه اصلی پروژه
     os.makedirs("app_source", exist_ok=True)
     file_name = os.path.join("app_source", "main.py")
     
@@ -32,7 +31,7 @@ def main():
     print("🧮 ماشین حساب موبایلی فعال شد!")
     num1 = 10
     num2 = 5
-    print(f"جمع {num1} و {num2} برابر است با: {num1 + num2}")
+    print(f"جمع: {num1 + num2}")
     print(f"تفریق: {num1 - num2}")
     print(f"ضرب: {num1 * num2}")
     print(f"تقسیم: {num1 / num2}")
@@ -65,7 +64,6 @@ if __name__ == "__main__":
     with open(file_name, "w", encoding="utf-8") as f:
         f.write(code_content)
         
-    # ۲. ساخت فایل تنظیمات Buildozer
     build_spec = os.path.join("app_source", "buildozer.spec")
     if not os.path.exists(build_spec):
         with open(build_spec, "w", encoding="utf-8") as f:
@@ -81,7 +79,7 @@ fullscreen = 0
 android.permissions = INTERNET
 """)
 
-    # ۳. ساخت فایل GitHub Actions (.github/workflows/build.yml) برای اینکه گیت‌هاب خودکار APK بسازه
+    # ساخت فایل گیت‌هاب اکشنز با نسخه آپدیت‌شده v4 (برای رفع ارور آپلود آرتفکت)
     workflow_dir = os.path.join(".github", "workflows")
     os.makedirs(workflow_dir, exist_ok=True)
     workflow_file = os.path.join(workflow_dir, "build_apk.yml")
@@ -96,10 +94,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
@@ -111,7 +109,7 @@ jobs:
           command: buildozer android debug
 
       - name: Upload APK Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: package
           path: app_source/bin/*.apk
@@ -119,15 +117,15 @@ jobs:
     with open(workflow_file, "w", encoding="utf-8") as f:
         f.write(workflow_content)
 
-    print(f"📁 فایل‌های پروژه، Buildozer و GitHub Actions با موفقیت ساخته شدند.")
+    print(f"📁 فایل‌های پروژه با موفقیت آپدیت شدند.")
     return "app_source"
 
 def git_agent(commit_message):
     """ایجنت گیت: کامیت و ارسال خودکار فایل‌ها به گیت‌هاب"""
-    print("\n📦 [ایجنت گیت]: در حال ارسال ساختار کامل به گیت‌هاب...")
+    print("\n📦 [ایجنت گیت]: در حال ارسال ساختار اصلاح‌شده به گیت‌هاب...")
     
     run_command("git add .")
-    success, _ = run_command(f'git commit -m "Auto-agent build for: {commit_message}"')
+    success, _ = run_command(f'git commit -m "Fix workflow v4 for: {commit_message}"')
     
     if success:
         print("🔄 دریافت آخرین تغییرات از گیت‌هاب (Pull)...")
@@ -135,7 +133,7 @@ def git_agent(commit_message):
         
         push_success, _ = run_command("git push origin main")
         if push_success:
-            print("🚀 پروژه با موفقیت روی گیت‌هاب نشست! گیت‌هاب اکشنز الان باید شروع به ساخت APK کند.")
+            print("🚀 کدهای اصلاح‌شده روی گیت‌هاب نشست! این بار اکشنز بدون ارور کارش رو شروع می‌کنه.")
         else:
             print("⚠️ خطا در ارسال به گیت‌هاب.")
     else:
@@ -152,16 +150,13 @@ def main():
             
         print(f"\n🧠 [مدیر پروژه]: دستور دریافت شد -> '{user_input}'")
         
-        # ۱. برنامه‌نویس فایل‌ها رو می‌سازه
         target_dir = coder_agent(user_input)
         
-        # ۲. ایجنت تست و عیب‌یاب (چک کردن سلامت سینتکس بدون قفل شدن روی input)
         print("\n🧪 [ایجنت تست و عیب‌یاب]: در حال بررسی صحت کدهای پایتون...")
         success, _ = run_command(f"python -m py_compile {target_dir}/main.py")
         
         if success:
-            print("🎉 تست سینتکس با موفقیت پاس شد!")
-            # ۳. ایجنت گیت کل پکیج (کد + بیلدوزر + گیت‌هاب اکشنز) رو می‌فرسته گیت‌هاب
+            print("🎉 تست سینتکس پاس شد!")
             git_agent(user_input)
         else:
             print("⚠️ خطا در کدهای تولید شده.")

@@ -1,10 +1,12 @@
-# کدهای بازی پایتونی برای اندروید
-import random
-
+# ماشین حساب پیشرفته پایتونی برای اندروید
 def main():
-    print("🎮 بازی موبایلی ایجنت اجرا شد!")
-    number = random.randint(1, 10)
-    print(f"عدد شانس اندروید: {number}")
+    print("🧮 ماشین حساب موبایلی فعال شد!")
+    num1 = 10
+    num2 = 5
+    print(f"جمع: {num1 + num2}")
+    print(f"تفریق: {num1 - num2}")
+    print(f"ضرب: {num1 * num2}")
+    print(f"تقسیم: {num1 / num2}")
 
 if __name__ == "__main__":
     main()
